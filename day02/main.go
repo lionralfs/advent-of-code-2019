@@ -36,7 +36,11 @@ func main() {
 		opcodes[i] = code
 	}
 
-	partOne(opcodes)
+	programCopy := make([]int, len(list))
+	copy(programCopy, opcodes)
+
+	partOne(programCopy)
+	partTwo(opcodes)
 }
 
 func executeIntcode(program []int) []int {
@@ -66,4 +70,23 @@ func partOne(program []int) {
 	result := executeIntcode(program)
 
 	fmt.Printf("[Part1] The value at position 0 after the running the program is: %d\n", result[0])
+}
+
+// just try every combination
+func partTwo(program []int) {
+	for noun := 0; noun <= 99; noun++ {
+		for verb := 0; verb <= 99; verb++ {
+			programCopy := make([]int, len(program))
+			copy(programCopy, program)
+			programCopy[1] = noun
+			programCopy[2] = verb
+
+			result := executeIntcode(programCopy)
+
+			if result[0] == 19690720 {
+				fmt.Printf("[Part2]\tFound the matching noun/verb pair; noun: %d, verb: %d\n\t100 * noun + verb = %d\n", noun, verb, 100*noun+verb)
+				return
+			}
+		}
+	}
 }
