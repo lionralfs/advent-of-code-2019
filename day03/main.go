@@ -24,6 +24,9 @@ func main() {
 
 	closest := closestIntersection(string(bytes))
 	fmt.Printf("[Part1] The closest manhattan distance is %d\n", closest)
+
+	closestSteps := closestIntersectionBySteps(string(bytes))
+	fmt.Printf("[Part2] The closest distance by steps is %d\n", closestSteps)
 }
 
 func intAbs(n int) int {
@@ -97,6 +100,37 @@ func closestIntersection(input string) int {
 		if visited[strconv.Itoa(x)+"--"+strconv.Itoa(y)] {
 			if distance := manhattanDistance(x, y); distance < minDistance {
 				minDistance = distance
+			}
+		}
+	})
+
+	return minDistance
+}
+
+func closestIntersectionBySteps(input string) int {
+	cables := strings.Split(input, "\n")
+
+	if count := len(cables); count != 2 {
+		panic(errors.New("Expected 2 cables, but got " + string(count)))
+	}
+
+	minDistance := math.MaxInt64
+	cable1Steps := make(map[string]int)
+	cable1StepCount := 0
+
+	walk(cables[0], func(x, y int) {
+		cable1StepCount++
+		cable1Steps[strconv.Itoa(x)+"--"+strconv.Itoa(y)] = cable1StepCount
+	})
+
+	cable2StepCount := 0
+	walk(cables[1], func(x, y int) {
+		cable2StepCount++
+		cable1StepsUntilHere := cable1Steps[strconv.Itoa(x)+"--"+strconv.Itoa(y)]
+
+		if cable1StepsUntilHere != 0 {
+			if sumOfSteps := cable1StepsUntilHere + cable2StepCount; sumOfSteps < minDistance {
+				minDistance = sumOfSteps
 			}
 		}
 	})
