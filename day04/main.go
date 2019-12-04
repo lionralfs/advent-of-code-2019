@@ -4,19 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	file, err := os.Open("./input.txt")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	bytes, err := ioutil.ReadAll(file)
+	bytes, err := ioutil.ReadFile("./input.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -59,29 +52,16 @@ func countPasswords(min, max int, validator func(password int) bool) int {
 	return result
 }
 
-func toDigits(n int) []int {
-	result := make([]int, 6)
-	asString := strconv.Itoa(n)
-
-	for i, e := range asString {
-		digit, _ := strconv.Atoi(string(e))
-		result[i] = digit
-	}
-
-	return result
-}
-
 func validatePassword(password int) bool {
 	// make sure it is 6-digits long
 	if password < 100000 || password > 999999 {
 		return false
 	}
 
-	digits := toDigits(password)
 	hasAdjacentDigits := false
-	lastSeen := -1
+	var lastSeen rune = -1
 
-	for _, digit := range digits {
+	for _, digit := range strconv.Itoa(password) {
 		if lastSeen > digit {
 			return false
 		}
@@ -102,12 +82,11 @@ func validatePasswordWithGroups(password int) bool {
 		return false
 	}
 
-	digits := toDigits(password)
 	hasTwoAdjacentDigits := false
 	repeatingDigits := 0
-	lastSeen := -1
+	var lastSeen rune = -1
 
-	for _, digit := range digits {
+	for _, digit := range strconv.Itoa(password) {
 		if lastSeen > digit {
 			return false
 		}

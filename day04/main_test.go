@@ -61,3 +61,21 @@ func TestPasswordValidatorWithGroups(t *testing.T) {
 		}
 	}
 }
+
+func TestSolutionToPart1(t *testing.T) {
+	want := 1767
+	result := countPasswords(145852, 616942, validatePassword)
+
+	if result != want {
+		t.Errorf("Got %d, but want %d", result, want)
+	}
+}
+
+func TestSolutionToPart2(t *testing.T) {
+	want := 1192
+	result := countPasswords(145852, 616942, validatePasswordWithGroups)
+
+	if result != want {
+		t.Errorf("Got %d, but want %d", result, want)
+	}
+}
