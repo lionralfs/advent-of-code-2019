@@ -38,16 +38,19 @@ func main() {
 		panic(errors.New("min is larger than max"))
 	}
 
-	possiblePasswords := countPasswords(min, max)
-	fmt.Printf("[Part1] There are %d possible passwords\n", possiblePasswords)
+	possiblePasswordsPart1 := countPasswords(min, max, validatePassword)
+	fmt.Printf("[Part1] There are %d possible passwords\n", possiblePasswordsPart1)
+
+	possiblePasswordsPart2 := countPasswords(min, max, validatePasswordWithGroups)
+	fmt.Printf("[Part2] There are %d possible passwords\n", possiblePasswordsPart2)
 }
 
-func countPasswords(min, max int) int {
+func countPasswords(min, max int, validator func(password int) bool) int {
 	result := 0
 	current := min
 
 	for current <= max {
-		if validatePassword(current) {
+		if validator(current) {
 			result++
 		}
 		current++
@@ -91,4 +94,38 @@ func validatePassword(password int) bool {
 	}
 
 	return hasAdjacentDigits
+}
+
+func validatePasswordWithGroups(password int) bool {
+	// make sure it is 6-digits long
+	if password < 100000 || password > 999999 {
+		return false
+	}
+
+	digits := toDigits(password)
+	hasTwoAdjacentDigits := false
+	repeatingDigits := 0
+	lastSeen := -1
+
+	for _, digit := range digits {
+		if lastSeen > digit {
+			return false
+		}
+
+		if lastSeen == digit {
+			repeatingDigits++
+		} else {
+			if repeatingDigits == 1 {
+				hasTwoAdjacentDigits = true
+			}
+			repeatingDigits = 0
+		}
+		lastSeen = digit
+	}
+
+	if repeatingDigits == 1 {
+		hasTwoAdjacentDigits = true
+	}
+
+	return hasTwoAdjacentDigits
 }
