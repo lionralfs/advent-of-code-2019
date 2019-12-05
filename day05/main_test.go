@@ -87,6 +87,90 @@ func TestExecuteIntcode(t *testing.T) {
 				outputs:           []int{},
 			},
 		},
+		{
+			inputArg: 8,
+			program: program{
+				instructionPointer: 0,
+				intcode:            []int{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8},
+				outputs:            []int{},
+			},
+			want: want{
+				finalProgramState: []int{},
+				outputs:           []int{1},
+			},
+		},
+		{
+			inputArg: 9,
+			program: program{
+				instructionPointer: 0,
+				intcode:            []int{3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8},
+				outputs:            []int{},
+			},
+			want: want{
+				finalProgramState: []int{},
+				outputs:           []int{0},
+			},
+		},
+		{
+			inputArg: 7,
+			program: program{
+				instructionPointer: 0,
+				intcode:            []int{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8},
+				outputs:            []int{},
+			},
+			want: want{
+				finalProgramState: []int{},
+				outputs:           []int{1},
+			},
+		},
+		{
+			inputArg: 9,
+			program: program{
+				instructionPointer: 0,
+				intcode:            []int{3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8},
+				outputs:            []int{},
+			},
+			want: want{
+				finalProgramState: []int{},
+				outputs:           []int{0},
+			},
+		},
+		{
+			inputArg: 7,
+			program: program{
+				instructionPointer: 0,
+				intcode:            []int{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99},
+				outputs:            []int{},
+			},
+			want: want{
+				finalProgramState: []int{},
+				outputs:           []int{999},
+			},
+		},
+		{
+			inputArg: 8,
+			program: program{
+				instructionPointer: 0,
+				intcode:            []int{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99},
+				outputs:            []int{},
+			},
+			want: want{
+				finalProgramState: []int{},
+				outputs:           []int{1000},
+			},
+		},
+		{
+			inputArg: 9,
+			program: program{
+				instructionPointer: 0,
+				intcode:            []int{3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99},
+				outputs:            []int{},
+			},
+			want: want{
+				finalProgramState: []int{},
+				outputs:           []int{1001},
+			},
+		},
 	}
 
 	for i, test := range tests {
@@ -96,7 +180,7 @@ func TestExecuteIntcode(t *testing.T) {
 
 		program.run(inputArg)
 
-		if !equal(program.intcode, want.finalProgramState) {
+		if len(want.finalProgramState) > 0 && !equal(program.intcode, want.finalProgramState) {
 			t.Errorf("Final program state is incorrect in test case %d\nGot %v, expected %v", i, program.intcode, want.finalProgramState)
 		}
 

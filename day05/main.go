@@ -39,31 +39,72 @@ func (p *program) getArg(mode, value int) int {
 
 func (p *program) executeInstruction(inputArg int) int {
 	operation := p.getOperation()
+	position := p.instructionPointer
 
 	switch operation[0] {
-	case 1:
-		arg1 := p.getArg(operation[1], p.intcode[p.instructionPointer+1])
-		arg2 := p.getArg(operation[2], p.intcode[p.instructionPointer+2])
-		writeAddress := p.intcode[p.instructionPointer+3]
+	case 1: // addition
+		arg1 := p.getArg(operation[1], p.intcode[position+1])
+		arg2 := p.getArg(operation[2], p.intcode[position+2])
+		writeAddress := p.intcode[position+3]
 		p.intcode[writeAddress] = arg1 + arg2
 
-		return 4
-	case 2:
-		arg1 := p.getArg(operation[1], p.intcode[p.instructionPointer+1])
-		arg2 := p.getArg(operation[2], p.intcode[p.instructionPointer+2])
-		writeAddress := p.intcode[p.instructionPointer+3]
+		return position + 4
+	case 2: // multiplication
+		arg1 := p.getArg(operation[1], p.intcode[position+1])
+		arg2 := p.getArg(operation[2], p.intcode[position+2])
+		writeAddress := p.intcode[position+3]
 		p.intcode[writeAddress] = arg1 * arg2
 
-		return 4
-	case 3:
-		writeAddress := p.intcode[p.instructionPointer+1]
+		return position + 4
+	case 3: // input
+		writeAddress := p.intcode[position+1]
 		p.intcode[writeAddress] = inputArg
-		return 2
-	case 4:
-		readAddress := p.getArg(operation[1], p.instructionPointer+1)
+		return position + 2
+	case 4: // output
+		readAddress := p.getArg(operation[1], position+1)
 		p.outputs = append(p.outputs, p.intcode[readAddress])
-		return 2
-	case 99:
+		return position + 2
+	case 5: // jump-if-true
+		arg1 := p.getArg(operation[1], p.intcode[position+1])
+		if arg1 != 0 {
+			return p.getArg(operation[2], p.intcode[position+2])
+		}
+		return position + 3
+	case 6: // jump-if-false
+		arg1 := p.getArg(operation[1], p.intcode[position+1])
+		if arg1 == 0 {
+			return p.getArg(operation[2], p.intcode[position+2])
+		}
+		return position + 3
+	case 7: // less than
+		arg1 := p.getArg(operation[1], p.intcode[position+1])
+		arg2 := p.getArg(operation[2], p.intcode[position+2])
+
+		writeAddress := p.intcode[position+3]
+
+		if arg1 < arg2 {
+			p.intcode[writeAddress] = 1
+		} else {
+			p.intcode[writeAddress] = 0
+		}
+		if writeAddress == position {
+			return position
+		}
+		return position + 4
+	case 8: // equals
+		arg1 := p.getArg(operation[1], p.intcode[position+1])
+		arg2 := p.getArg(operation[2], p.intcode[position+2])
+
+		writeAddress := p.intcode[position+3]
+
+		if arg1 == arg2 {
+			p.intcode[writeAddress] = 1
+		} else {
+			p.intcode[writeAddress] = 0
+		}
+
+		return position + 4
+	case 99: // halt
 		return -1
 	default:
 		panic(errors.New("Unknown operation: " + strconv.Itoa(operation[0])))
@@ -72,13 +113,13 @@ func (p *program) executeInstruction(inputArg int) int {
 
 func (p *program) run(inputArg int) {
 	for p.instructionPointer < len(p.intcode) {
-		pointsToJump := p.executeInstruction(inputArg)
+		jumpTo := p.executeInstruction(inputArg)
 
-		if pointsToJump < 0 {
+		if jumpTo < 0 {
 			return
 		}
 
-		p.instructionPointer += pointsToJump
+		p.instructionPointer = jumpTo
 	}
 
 	panic(errors.New("Reached end of program without encountering opcode 99 (halt)"))
@@ -93,6 +134,14 @@ func main() {
 	partOne.run(1)
 
 	fmt.Printf("[Part1] Outputs: %v\n", partOne.outputs)
+
+	partTwo := program{
+		instructionPointer: 0,
+		intcode:            readInput(),
+		outputs:            []int{},
+	}
+	partTwo.run(5)
+	fmt.Printf("[Part2] Outputs: %v\n", partTwo.outputs)
 }
 
 func readInput() []int {
