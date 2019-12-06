@@ -18,3 +18,21 @@ func TestChecksum(t *testing.T) {
 		}
 	}
 }
+
+func TestDistanceToSanta(t *testing.T) {
+	tests := []struct {
+		input string
+		want  int
+	}{
+		{
+			input: "COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L\nK)YOU\nI)SAN",
+			want:  4,
+		},
+	}
+
+	for i, test := range tests {
+		if output := distanceToSanta(test.input); output != test.want {
+			t.Errorf("Got %d, but expected %d in test case %d", output, test.want, i)
+		}
+	}
+}

@@ -7,17 +7,22 @@ import (
 )
 
 type node struct {
-	name     string
-	children []*node
+	name            string
+	children        []*node
+	parent          *node
+	distanceToSanta int
 }
 
 func main() {
 	bytes, _ := ioutil.ReadFile("./input.txt")
-	output := calculateChecksum(string(bytes))
-	fmt.Printf("[Part1] The total number of direct and indirect orbits is %d\n", output)
+	output1 := calculateChecksum(string(bytes))
+	fmt.Printf("[Part1] The total number of direct and indirect orbits is %d\n", output1)
+
+	output2 := distanceToSanta(string(bytes))
+	fmt.Printf("[Part2] The total distance to santa is %d\n", output2)
 }
 
-func calculateChecksum(orbitMap string) int {
+func readInput(orbitMap string) map[string]*node {
 	relationships := strings.Split(orbitMap, "\n")
 	known := map[string]*node{}
 	for _, relationship := range relationships {
@@ -34,9 +39,19 @@ func calculateChecksum(orbitMap string) int {
 				name: el2,
 			}
 		}
+
+		// add el1 as parent of el2
+		known[el2].parent = known[el1]
+
+		// add el2 to children of el1
 		children := known[el1].children
 		known[el1].children = append(children, known[el2])
 	}
+	return known
+}
+
+func calculateChecksum(orbitMap string) int {
+	known := readInput(orbitMap)
 	return checksum(known["COM"], 0)
 }
 
@@ -49,4 +64,31 @@ func checksum(node *node, depth int) int {
 		sum += checksum(child, depth+1)
 	}
 	return sum
+}
+
+func distanceToSanta(orbitMap string) int {
+	known := readInput(orbitMap)
+	current := known["SAN"]
+	distance := -1
+
+	for current != nil {
+		current.distanceToSanta = distance
+
+		distance++
+		current = current.parent
+	}
+
+	current = known["YOU"]
+	distance = -1
+
+	for current != nil {
+		if current.distanceToSanta > 0 {
+			return distance + current.distanceToSanta
+		}
+
+		distance++
+		current = current.parent
+	}
+
+	return 0
 }
