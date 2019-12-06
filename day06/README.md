@@ -24,6 +24,7 @@ Whenever A orbits B and B orbits C, then A indirectly orbits C. This chain can b
 
 For example, suppose you have the following map:
 
+```
 COM)B
 B)C
 C)D
@@ -35,6 +36,7 @@ D)I
 E)J
 J)K
 K)L
+```
 
 Visually, the above map of orbits looks like this:
 
@@ -66,6 +68,7 @@ You start at the object YOU are orbiting; your destination is the object SAN is 
 
 For example, suppose you have the following map:
 
+```
 COM)B
 B)C
 C)D
@@ -79,6 +82,7 @@ J)K
 K)L
 K)YOU
 I)SAN
+```
 
 Visually, the above map of orbits looks like this:
 
