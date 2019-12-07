@@ -1,14 +1,16 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func main() {
 	intcode := readInput()
-	result, configuration := largestOutput(intcode)
 
-	fmt.Printf("[Part1] The largest output is: %v (using configuration %v)\n", result, configuration)
+	result1, configuration1 := largestOutput(intcode)
+	fmt.Printf("[Part1] The largest output is: %v (using configuration %v)\n", result1, configuration1)
+
+	result2, configuration2 := largestOutputFeedback(intcode)
+	fmt.Printf("[Part2] The largest output is: %v (using configuration %v)\n", result2, configuration2)
+
 }
 
 func permutations(arr []int) [][]int {
@@ -68,6 +70,48 @@ func largestOutput(originalProgram []int) (int, []int) {
 			configuration = permutation
 		}
 
+	}
+
+	return max, configuration
+}
+
+func largestOutputFeedback(intcode []int) (int, []int) {
+	permutations := permutations([]int{5, 6, 7, 8, 9})
+
+	max := 0
+	configuration := make([]int, 4)
+
+	for _, permutation := range permutations {
+		// stores the output of the last amplifier, starting with 0 (the input to the first one)
+		previousOutput := 0
+		amplifiers := make([]*Program, 5)
+
+		// initialize amplifiers by passing a copy of the "source code"
+		// and the phase they should run on
+		for i := range amplifiers {
+			codeCopy := make([]int, len(intcode))
+			copy(codeCopy, intcode)
+			amplifiers[i] = &Program{
+				code:   codeCopy,
+				inputs: []int{permutation[i]},
+			}
+		}
+
+		last := amplifiers[4]
+
+		// as long as the last one is not done
+		for !last.done {
+			// calculate the output and use it as input for the next amplifier for each amplifier
+			for _, amplifier := range amplifiers {
+				amplifier.inputs = append(amplifier.inputs, previousOutput)
+				previousOutput = amplifier.Run()
+			}
+		}
+
+		if last.output > max {
+			max = last.output
+			configuration = permutation
+		}
 	}
 
 	return max, configuration
