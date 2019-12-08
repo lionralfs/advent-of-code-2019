@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+	"image"
+	"image/color"
+	"image/png"
 	"io/ioutil"
 	"math"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -16,6 +20,7 @@ func readInput() string {
 
 func main() {
 	partOne()
+	partTwo()
 }
 
 func partOne() {
@@ -25,6 +30,59 @@ func partOne() {
 	twos := countDigitOccurenceInLayer(&layer, 2)
 
 	fmt.Printf("[Part1] The layer with the fewest 0's is at index %d (%d); The product of the count of 1's and count of 2's on that layer is %d\n", minIndex, min, ones*twos)
+}
+
+func partTwo() {
+	input := readInput()
+	width := 25
+	height := 6
+	layers := extractLayers(input, width, height)
+
+	// start with a transparent layer
+	temp := make([][]int, width)
+	for x := range temp {
+		temp[x] = make([]int, height)
+
+		for y := range temp[x] {
+			temp[x][y] = 2
+		}
+	}
+
+	// go from the topmost layer back,
+	// and for each layer, only override the
+	// position if it was previously transparent
+	for _, layer := range layers {
+		for y, row := range layer {
+			for x, digit := range row {
+				if temp[x][y] == 2 {
+					temp[x][y] = digit
+				}
+			}
+		}
+	}
+
+	// encode temp as image
+	upLeft := image.Point{0, 0}
+	lowRight := image.Point{width, height}
+	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
+
+	// Set color for each pixel.
+	for x := range temp {
+		for y, value := range temp[x] {
+			switch value {
+			case 0:
+				img.Set(x, y, color.Black)
+			case 1:
+				img.Set(x, y, color.White)
+			}
+		}
+	}
+
+	// Encode as PNG.
+	f, _ := os.Create("output.png")
+	png.Encode(f, img)
+
+	fmt.Println("[Part2] The generated image is at outout.png")
 }
 
 func extractLayers(input string, width, height int) [][][]int {
@@ -39,9 +97,10 @@ func extractLayers(input string, width, height int) [][][]int {
 	var layers [][][]int
 
 	for i := 0; i < len(digits); i += width * height {
-		layer := make([][]int, height)
+		layer := make([][]int, 0)
 		for j := i; j < i+width*height; j += width {
-			layer[j%height] = digits[j : j+width]
+			row := digits[j : j+width]
+			layer = append(layer, row)
 		}
 		layers = append(layers, layer)
 	}
