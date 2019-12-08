@@ -10,20 +10,20 @@ func TestMinZeroDigits(t *testing.T) {
 		min      int
 		minIndex int
 	}{
-		// {
-		// 	input:    "123456789012",
-		// 	width:    3,
-		// 	height:   2,
-		// 	min:      0,
-		// 	minIndex: 0,
-		// },
-		// {
-		// 	input:    "100456789012",
-		// 	width:    3,
-		// 	height:   2,
-		// 	min:      1,
-		// 	minIndex: 1,
-		// },
+		{
+			input:    "123456789012",
+			width:    3,
+			height:   2,
+			min:      0,
+			minIndex: 0,
+		},
+		{
+			input:    "100456789012",
+			width:    3,
+			height:   2,
+			min:      1,
+			minIndex: 1,
+		},
 		{
 			input:    "0222112220120000",
 			width:    2,
