@@ -23,12 +23,8 @@ func (m Moon) String() string {
 	return fmt.Sprintf("pos=<x=%v, y=%v, z=%v>, vel=<x=%v, y=%v, z=%v>", m.position.x, m.position.y, m.position.z, m.velocity.x, m.velocity.y, m.velocity.z)
 }
 
-func main() {
-	partOne()
-}
-
-func partOne() {
-	bytes, _ := ioutil.ReadFile("./input.txt")
+func getMoons(inputFilePath string) []Moon {
+	bytes, _ := ioutil.ReadFile(inputFilePath)
 	r := regexp.MustCompile(`^<x=(-?\d+), y=(-?\d+), z=(-?\d+)>$`)
 
 	var moons []Moon
@@ -53,6 +49,18 @@ func partOne() {
 		})
 
 	}
+
+	return moons
+}
+
+func main() {
+	partOne()
+	count := partTwo()
+	fmt.Printf("[Part2] It takes %v steps for history to repeat itself\n", count)
+}
+
+func partOne() {
+	moons := getMoons("./input.txt")
 
 	// build pairs between moons
 	var pairs [][]Moon
@@ -122,6 +130,103 @@ func partOne() {
 	fmt.Printf("[Part1] After %v steps, the total energy is: %v\n", steps, totalEnergy)
 }
 
+func detectRepetition(positions []int) int {
+	moonCount := len(positions)
+	initial := make([]int, moonCount)
+	velocities := make([]int, moonCount)
+	copy(initial, positions)
+
+	for steps := 1; ; steps++ {
+		repeating := true
+		// apply gravity
+		for i := range positions {
+			for j := i + 1; j < moonCount; j++ {
+				moonAIndex := i
+				moonBIndex := j
+
+				if positions[moonAIndex] > positions[moonBIndex] {
+					velocities[moonAIndex]--
+					velocities[moonBIndex]++
+				} else if positions[moonAIndex] < positions[moonBIndex] {
+					velocities[moonAIndex]++
+					velocities[moonBIndex]--
+				}
+			}
+
+			// apply velocity by adding the velocity to the position
+			positions[i] += velocities[i]
+
+			if positions[i] != initial[i] {
+				repeating = false
+			}
+		}
+		if repeating {
+			return steps + 1
+		}
+	}
+}
+
+func partTwo() int {
+	moons := getMoons("./input.txt")
+	// make a copy of the moons
+	initial := make([]Moon, len(moons))
+	for i, moon := range moons {
+		initial[i] = Moon{
+			position: &Coordinate{
+				x: moon.position.x,
+				y: moon.position.y,
+				z: moon.position.z,
+			},
+		}
+	}
+
+	// build pairs between moons
+	var pairs [][]Moon
+
+	for i, moonA := range moons {
+		for j := i + 1; j < len(moons); j++ {
+			pair := make([]Moon, 2)
+			pair[0] = moonA
+			pair[1] = moons[j]
+			pairs = append(pairs, pair)
+		}
+	}
+
+	xAxis := make([]int, len(moons))
+	yAxis := make([]int, len(moons))
+	zAxis := make([]int, len(moons))
+	for i, moon := range moons {
+		xAxis[i] = moon.position.x
+		yAxis[i] = moon.position.y
+		zAxis[i] = moon.position.z
+	}
+
+	xRepetition := detectRepetition(xAxis)
+	yRepetition := detectRepetition(yAxis)
+	zRepetition := detectRepetition(zAxis)
+
+	return lcm(xRepetition, yRepetition, zRepetition)
+}
+
 func intAbs(n int) int {
 	return int(math.Abs(float64(n)))
+}
+
+func gcd(a, b int) int {
+	for b != 0 {
+		t := b
+		b = a % b
+		a = t
+	}
+	return a
+}
+
+func lcm(a, b int, integers ...int) int {
+	result := a * b / gcd(a, b)
+
+	for i := 0; i < len(integers); i++ {
+		result = lcm(result, integers[i])
+	}
+
+	return result
 }
