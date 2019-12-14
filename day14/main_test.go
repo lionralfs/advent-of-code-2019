@@ -4,7 +4,7 @@ import "testing"
 
 func TestInput1(t *testing.T) {
 	want := 31
-	output := calculateOreRequiredForOneFuel("./testinput1.txt")
+	output := calculateOreRequiredForFuel("./testinput1.txt", 1)
 
 	if output != want {
 		t.Errorf("Got %v, expected %v", output, want)
@@ -13,7 +13,7 @@ func TestInput1(t *testing.T) {
 
 func TestInput2(t *testing.T) {
 	want := 165
-	output := calculateOreRequiredForOneFuel("./testinput2.txt")
+	output := calculateOreRequiredForFuel("./testinput2.txt", 1)
 
 	if output != want {
 		t.Errorf("Got %v, expected %v", output, want)
@@ -22,7 +22,7 @@ func TestInput2(t *testing.T) {
 
 func TestInput3(t *testing.T) {
 	want := 13312
-	output := calculateOreRequiredForOneFuel("./testinput3.txt")
+	output := calculateOreRequiredForFuel("./testinput3.txt", 1)
 
 	if output != want {
 		t.Errorf("Got %v, expected %v", output, want)
@@ -31,7 +31,7 @@ func TestInput3(t *testing.T) {
 
 func TestInput4(t *testing.T) {
 	want := 180697
-	output := calculateOreRequiredForOneFuel("./testinput4.txt")
+	output := calculateOreRequiredForFuel("./testinput4.txt", 1)
 
 	if output != want {
 		t.Errorf("Got %v, expected %v", output, want)
@@ -40,7 +40,7 @@ func TestInput4(t *testing.T) {
 
 func TestInput5(t *testing.T) {
 	want := 2210736
-	output := calculateOreRequiredForOneFuel("./testinput5.txt")
+	output := calculateOreRequiredForFuel("./testinput5.txt", 1)
 
 	if output != want {
 		t.Errorf("Got %v, expected %v", output, want)
@@ -49,7 +49,7 @@ func TestInput5(t *testing.T) {
 
 func TestRealInput(t *testing.T) {
 	want := 168046
-	output := calculateOreRequiredForOneFuel("./input.txt")
+	output := calculateOreRequiredForFuel("./input.txt", 1)
 
 	if output != want {
 		t.Errorf("Got %v, expected %v", output, want)

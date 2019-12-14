@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
@@ -24,12 +25,31 @@ type Reaction struct {
 }
 
 func main() {
-	part1Result := calculateOreRequiredForOneFuel("./input.txt")
-
+	part1Result := calculateOreRequiredForFuel("./input.txt", 1)
 	fmt.Printf("[Part1] %v ORE is required to make 1 FUEL\n", part1Result)
+
+	partTwo()
 }
 
-func calculateOreRequiredForOneFuel(inputfile string) int {
+func partTwo() {
+	maxOre := 1000000000000
+
+	low, high := 0, maxOre
+	for low < high {
+		middle := (low + high) / 2
+		oreRequired := calculateOreRequiredForFuel("./input.txt", middle)
+
+		if oreRequired <= maxOre {
+			low = middle + 1
+		} else {
+			high = middle - 1
+		}
+	}
+
+	fmt.Printf("[Part2] You can produce %v FUEL\n", low)
+}
+
+func calculateOreRequiredForFuel(inputfile string, fuelAmount int) int {
 	reactions := readInput(inputfile)
 	available := make(map[Unit]int)
 
@@ -53,10 +73,7 @@ func calculateOreRequiredForOneFuel(inputfile string) int {
 				continue
 			}
 
-			factor := 1
-			for factor*reaction.output.amount+available[unit] < amount {
-				factor++
-			}
+			factor := int(math.Ceil(float64((amount)-available[unit]) / float64(reaction.output.amount)))
 
 			// produce all required inputs
 			for _, input := range reaction.inputs {
@@ -66,7 +83,7 @@ func calculateOreRequiredForOneFuel(inputfile string) int {
 		}
 	}
 
-	produce(1, "FUEL")
+	produce(fuelAmount, "FUEL")
 
 	return oreUsed
 }
