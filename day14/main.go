@@ -116,7 +116,7 @@ func readInput(file string) []Reaction {
 }
 
 func parseResource(s string) Resource {
-	r := regexp.MustCompile(`^(\d+) ([A-Z]+)$`)
+	r := regexp.MustCompile(`^(\d+) ([A-Z]+)\r?$`)
 	matches := r.FindStringSubmatch(s)
 
 	amount, _ := strconv.Atoi(matches[1])
