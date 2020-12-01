@@ -55,3 +55,30 @@ func TestRealInput(t *testing.T) {
 		t.Errorf("Got %v, expected %v", output, want)
 	}
 }
+
+func TestMaxProducableFuel1(t *testing.T) {
+	want := 82892753
+	output := maxProducableFuel("./testinput3.txt")
+
+	if output != want {
+		t.Errorf("Got %v, expected %v", output, want)
+	}
+}
+
+func TestMaxProducableFuel2(t *testing.T) {
+	want := 5586022
+	output := maxProducableFuel("./testinput4.txt")
+
+	if output != want {
+		t.Errorf("Got %v, expected %v", output, want)
+	}
+}
+
+func TestMaxProducableFuel3(t *testing.T) {
+	want := 460664
+	output := maxProducableFuel("./testinput5.txt")
+
+	if output != want {
+		t.Errorf("Got %v, expected %v", output, want)
+	}
+}

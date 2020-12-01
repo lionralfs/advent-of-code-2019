@@ -32,12 +32,22 @@ func main() {
 }
 
 func partTwo() {
+	fmt.Printf("[Part2] You can produce %v FUEL\n", maxProducableFuel("./input.txt"))
+}
+
+func maxProducableFuel(inputfile string) int {
 	maxOre := 1000000000000
+
+	best := 0
 
 	low, high := 0, maxOre
 	for low < high {
 		middle := (low + high) / 2
-		oreRequired := calculateOreRequiredForFuel("./input.txt", middle)
+		oreRequired := calculateOreRequiredForFuel(inputfile, middle)
+
+		if oreRequired <= maxOre && middle > best {
+			best = middle
+		}
 
 		if oreRequired <= maxOre {
 			low = middle + 1
@@ -46,7 +56,7 @@ func partTwo() {
 		}
 	}
 
-	fmt.Printf("[Part2] You can produce %v FUEL\n", low)
+	return best
 }
 
 func calculateOreRequiredForFuel(inputfile string, fuelAmount int) int {
