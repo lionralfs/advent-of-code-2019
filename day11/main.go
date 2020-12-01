@@ -136,9 +136,9 @@ func partTwo() {
 		// update the direction
 		switch direction {
 		case 0:
-			currentDirection = (currentDirection + 90) % 360
-		case 1:
 			currentDirection = (currentDirection + 270) % 360
+		case 1:
+			currentDirection = (currentDirection + 90) % 360
 		default:
 			panic("Unknown direction: " + strconv.Itoa(direction))
 		}
@@ -161,7 +161,10 @@ func partTwo() {
 
 	for y := range printableField {
 		for _, val := range printableField[y] {
-			fmt.Printf("%v ", val)
+			if val == "" {
+				val = "."
+			}
+			fmt.Printf("%v", val)
 		}
 		fmt.Println("")
 	}
