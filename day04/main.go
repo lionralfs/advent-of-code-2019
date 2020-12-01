@@ -16,7 +16,7 @@ func main() {
 
 	passwordRange := strings.Split(string(bytes), "-")
 	if len(passwordRange) != 2 {
-		panic(errors.New("Expected range to be of length 2, it has length " + string(len(passwordRange))))
+		panic(errors.New("Expected range to be of length 2, it has length " + strconv.Itoa(len(passwordRange))))
 	}
 	min, err := strconv.Atoi(passwordRange[0])
 	if err != nil {

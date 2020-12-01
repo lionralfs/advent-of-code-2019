@@ -86,7 +86,7 @@ func closestIntersection(input string) int {
 	cables := strings.Split(input, "\n")
 
 	if count := len(cables); count != 2 {
-		panic(errors.New("Expected 2 cables, but got " + string(count)))
+		panic(errors.New("Expected 2 cables, but got " + strconv.Itoa(count)))
 	}
 
 	minDistance := math.MaxInt64
@@ -111,7 +111,7 @@ func closestIntersectionBySteps(input string) int {
 	cables := strings.Split(input, "\n")
 
 	if count := len(cables); count != 2 {
-		panic(errors.New("Expected 2 cables, but got " + string(count)))
+		panic(errors.New("Expected 2 cables, but got " + strconv.Itoa(count)))
 	}
 
 	minDistance := math.MaxInt64
