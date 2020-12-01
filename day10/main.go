@@ -47,6 +47,11 @@ func partTwo() {
 	bytes, _ := ioutil.ReadFile("./input.txt")
 	field := NewField(string(bytes))
 
+	fmt.Printf("[Part2] %v \n", partTwoSolution(field))
+}
+
+func partTwoSolution(field Field) int {
+	// find the location of the monitoring station
 	coord, _ := field.SeesMax()
 
 	astroids := make([]*Astroid, 0)
@@ -65,7 +70,10 @@ func partTwo() {
 				astroid := &Astroid{
 					coordinates: Coordinate{x, y},
 					distance:    int(math.Abs(float64(xDifference)) + math.Abs(float64(yDifference))),
-					angle:       angle, // TODO
+					angle:       angle,
+					// here, initially we only mark the astroid that the laser is on
+					// as destroyed so we don't select it when trying to shoot other astroids
+					destroyed: x == coord.x && y == coord.y,
 				}
 				astroids = append(astroids, astroid)
 			}
@@ -74,10 +82,12 @@ func partTwo() {
 
 	// start at a negative number so we can be sure to hit the 0 angles first
 	var currentAngle float64 = -1.0
+
+	// start shooting the astroids in a loop
 	for i := range astroids {
-		bestTarget := NextTarget(astroids, currentAngle)
-		currentAngle = bestTarget.angle
-		bestTarget.destroyed = true
+		astroidToShoot := NextTarget(astroids, currentAngle)
+		currentAngle = astroidToShoot.angle
+		astroidToShoot.destroyed = true
 
 		// update angles that we've already passed
 		for _, e := range astroids {
@@ -86,16 +96,17 @@ func partTwo() {
 			}
 		}
 
-		field.data[bestTarget.coordinates.x][bestTarget.coordinates.y] = strconv.Itoa(i + 1)
+		field.data[astroidToShoot.coordinates.x][astroidToShoot.coordinates.y] = strconv.Itoa(i + 1)
 
 		if i+1 == 200 {
-			x := bestTarget.coordinates.x
-			y := bestTarget.coordinates.y
-			fmt.Printf("[Part2] The 200th destroyed astroid is at (x, y): (%v, %v), so the solution is %v\n", x, y, x*100+4)
-			return
+			x := astroidToShoot.coordinates.x
+			y := astroidToShoot.coordinates.y
+			return x*100 + y
 		}
 
 	}
+	return -1
+
 }
 
 // NextTarget selects the next target to shoot

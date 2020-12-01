@@ -129,3 +129,32 @@ func TestCount4(t *testing.T) {
 		t.Errorf("Expected coordinate %v, got %v", wantCoord, coord)
 	}
 }
+
+func TestCount5(t *testing.T) {
+	bytes, _ := ioutil.ReadFile("./testinput6.txt")
+	field := NewField(string(bytes))
+
+	coord, count := field.SeesMax()
+
+	wantCount := 299
+	wantCoord := Coordinate{x: 26, y: 29}
+
+	if count != wantCount {
+		t.Errorf("Expected max count %v, got %v", wantCount, count)
+	}
+	if coord.x != wantCoord.x || coord.y != wantCoord.y {
+		t.Errorf("Expected coordinate %v, got %v", wantCoord, coord)
+	}
+}
+
+func TestShoot1(t *testing.T) {
+	bytes, _ := ioutil.ReadFile("./input.txt")
+	field := NewField(string(bytes))
+
+	res := partTwoSolution(field)
+	want := 604
+
+	if res != want {
+		t.Errorf("Expected %v, got %v", want, res)
+	}
+}
